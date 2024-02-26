@@ -178,10 +178,12 @@ void submenu(int amount_polygons,polygon *p_polygon)
   switch(choice_submenu)
     {
       case 1:
+      P_S(amount_polygons,p_polygon);
       max_square(amount_polygons,p_polygon);
       break;
 
       case 2:
+      P_S(amount_polygons,p_polygon);
       max_perimetr(amount_polygons,p_polygon);
       break;
 
