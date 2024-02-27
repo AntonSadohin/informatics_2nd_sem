@@ -1,5 +1,6 @@
 #include <iostream>
 #include <math.h>
+#define PI 3.14159265358979323846
 using namespace std;
 struct polygon
 {
@@ -12,6 +13,50 @@ struct polygon
   double x[100];
   double y[100];
 };
+void input_coordinates(int current,int amount_polygons,polygon *p_polygon)
+ {
+     for(int i=current-1;i<current;++i)
+     {
+        cout<<"\n"<<"Polygon number:"<<i+1<<"\n";
+        cout<<"Enter coordinate x of the farest polygon vertex";
+        cin>>p_polygon[current-1].x1;
+        cout<<"Enter coordinate y of the farest polygon vertex";
+        cin>>p_polygon[current-1].y1;
+     }
+ }
+ void calculation_coordinates(int current,int amount_polygons,polygon *p_polygon)
+ {
+     double R;
+     double dxR;
+     double dyR;
+     double xR;
+     double yR;
+     double k;
+     R = p_polygon[0].modul_side/(2*sin(M_PI/p_polygon[0].amount_angles));
+     k=atan(p_polygon[current-1].y1/p_polygon[current-1].x1);
+     dxR=R*cos(k);
+     dyR=R*sin(k);
+     xR=p_polygon[current-1].x1-dxR;
+     yR=p_polygon[current-1].y1-dyR;
+     cout<<xR<<"\n";
+     cout<<yR<<"\n";
+     cout<<R<<"\n";
+     double angle=2*M_PI/p_polygon[0].amount_angles;
+     for(int i=1;i<p_polygon[0].amount_angles;++i)
+     {
+         double NewAngle=2*M_PI-i*angle;
+         double Next_X=xR-R*cos(NewAngle);
+         double Next_Y=yR-R*sin(NewAngle);
+         cout<<"Coordinates of polygon:\n";
+         cout<<p_polygon[current-1].x1;
+         cout<<p_polygon[current-1].y1;
+         cout<<1+i<<"Vertex X coordinate:"<<Next_X<<"\n";
+         cout<<1+i<<"Vertex Y coordinate:"<<Next_Y<<"\n";
+     }
+
+
+
+ }
 void input(int current,int amount_polygons,polygon *p_polygon) {
   for(int i=current-1;i<current;i++)
     {
@@ -20,6 +65,7 @@ void input(int current,int amount_polygons,polygon *p_polygon) {
       cin>>p_polygon[i].modul_side;
       cout<<"Amount of angles";
       cin>>p_polygon[i].amount_angles;
+      input_coordinates(current,amount_polygons,p_polygon);
     }
 }
 void output(int current,int amount_polygons,polygon *p_polygon)
@@ -31,6 +77,7 @@ void output(int current,int amount_polygons,polygon *p_polygon)
         cout <<"Amount angles="<<p_polygon[i].amount_angles<<"\n";
         cout <<"Perimeter of polygon="<<p_polygon[i].P<<"\n";
         cout<<"Area of polygon="<<p_polygon[i].S<<"\n";
+        calculation_coordinates(current,amount_polygons,p_polygon);
     }
 }
 void P_S(int amount_polygons,polygon* p_polygon){
@@ -69,7 +116,7 @@ void max_square(int amount_polygons,polygon* p_polygon)
     }
   for(int i=0;i<amount_polygons;++i)
     {
-      if(p_polygon[i].S==max_square)
+      if((p_polygon[i].S==max_square)&&(amount_polygons!=0))
       {
         max_square_polygons++;
         array_number_max_square[i]=i+1;
@@ -125,24 +172,6 @@ void max_perimetr(int amount_polygons,polygon* p_polygon)
   }
   cout<<"\n";
 }
-
- void input_coordinates(int amount_polygons,polygon *p_polygon)
- {
-     for(int i=0;i<amount_polygons;++i)
-     {
-        cout<<"\n"<<"Polygon number:"<<i+1<<"\n";
-        cout<<"Enter coordinate x of the farest polygon vertex";
-        cin>>p_polygon[i].x1;
-        cout<<"Enter coordinate y of the farest polygon vertex";
-        cin>>p_polygon[i].y1;
-     }
- }
-
- void calculation_coordinates(int amount_polygons,polygon *p_polygon)
- {
-    
- }
-
  void output_coordinates(int amount_polygons,polygon *p_polygon)
  {
      for(int i=0;i<amount_polygons;++i)
@@ -193,7 +222,7 @@ void submenu(int amount_polygons,polygon *p_polygon)
 
       default:
       cout<<"Error";
-      
+
     }
   }
 }
@@ -213,7 +242,7 @@ void menu(int amount_polygons,polygon *p_polygon)
   cin>>choice;
   switch(choice)
     {
-      
+
       case 1:
       current++;
       input(current,amount_polygons,p_polygon);
@@ -259,11 +288,4 @@ int main(){
     cin>>amount_polygons;
     polygon *p_polygon=new polygon[amount_polygons];
     menu(amount_polygons,p_polygon);
-    /*input(amount_polygons,p_polygon);
-    P_S(amount_polygons,p_polygon);
-    output(amount_polygons,p_polygon);
-    max_square(amount_polygons,p_polygon);
-    max_perimetr(amount_polygons,p_polygon);
-    input_coordinates(amount_polygons,p_polygon);
-    output_coordinates(amount_polygons,p_polygon);*/
 }
