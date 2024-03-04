@@ -10,9 +10,8 @@ struct polygon
   double S;
   double x1;
   double y1;
-  double x[100];
-  double y[100];
 };
+
 void input_coordinates(int current,int amount_polygons,polygon *p_polygon)
  {
      for(int i=current-1;i<current;++i)
@@ -24,40 +23,39 @@ void input_coordinates(int current,int amount_polygons,polygon *p_polygon)
         cin>>p_polygon[current-1].y1;
      }
  }
- void calculation_coordinates(int current,int amount_polygons,polygon *p_polygon)
- {
-     double R;
-     double dxR;
-     double dyR;
-     double xR;
-     double yR;
-     double k;
-     R = p_polygon[0].modul_side/(2*sin(M_PI/p_polygon[0].amount_angles));
-     k=atan(p_polygon[current-1].y1/p_polygon[current-1].x1);
-     dxR=R*cos(k);
-     dyR=R*sin(k);
-     xR=p_polygon[current-1].x1-dxR;
-     yR=p_polygon[current-1].y1-dyR;
-     cout<<xR<<"\n";
-     cout<<yR<<"\n";
-     cout<<R<<"\n";
-     double angle=2*M_PI/p_polygon[0].amount_angles;
-     for(int i=1;i<p_polygon[0].amount_angles;++i)
-     {
-         double NewAngle=2*M_PI-i*angle;
-         double Next_X=xR-R*cos(NewAngle);
-         double Next_Y=yR-R*sin(NewAngle);
-         cout<<"Coordinates of polygon:\n";
-         cout<<p_polygon[current-1].x1;
-         cout<<p_polygon[current-1].y1;
-         cout<<1+i<<"Vertex X coordinate:"<<Next_X<<"\n";
-         cout<<1+i<<"Vertex Y coordinate:"<<Next_Y<<"\n";
-     }
-
-
-
- }
-void input(int current,int amount_polygons,polygon *p_polygon) {
+void calculation_coordinates(int amount_polygons, polygon *p_polygon) {
+    for (int i = 0; i < amount_polygons; ++i) {
+        double R;
+        double dxR;
+        double dyR;
+        double xR;
+        double yR;
+        double k;
+        R = p_polygon[i].modul_side / (2 * sin(M_PI / p_polygon[i].amount_angles));
+        k = atan(p_polygon[i].y1 / p_polygon[i].x1);
+        dxR = R * cos(k);
+        dyR = R * sin(k);
+        xR = p_polygon[i].x1 - dxR;
+        yR = p_polygon[i].y1 - dyR;
+        double angle = 2 * M_PI / p_polygon[i].amount_angles;
+        cout << "Coordinates of polygon " << i + 1 << ":\n";
+        for (int j = 1; j < p_polygon[i].amount_angles; ++j) {
+            double NewAngle = 2 * M_PI - j * angle;
+            double Next_X = xR + R * cos(NewAngle);
+            double Next_Y = yR + R * sin(NewAngle);
+            cout << "Vertex " << j + 1 << ": " << Next_X << ";" << Next_Y << "\n";
+        }
+    }
+}
+void input(int current,int &amount_polygons,polygon *&p_polygon) {
+  amount_polygons++;
+  polygon *new_p_polygon = new polygon[amount_polygons];
+  for(int i=0;i<amount_polygons-1;++i)
+    {
+      new_p_polygon[i]=p_polygon[i];
+    }
+  delete[] p_polygon;
+  p_polygon=new_p_polygon;
   for(int i=current-1;i<current;i++)
     {
       cout<<"Polygon  "<<i+1<<"\n";
@@ -77,8 +75,8 @@ void output(int current,int amount_polygons,polygon *p_polygon)
         cout <<"Amount angles="<<p_polygon[i].amount_angles<<"\n";
         cout <<"Perimeter of polygon="<<p_polygon[i].P<<"\n";
         cout<<"Area of polygon="<<p_polygon[i].S<<"\n";
-        calculation_coordinates(current,amount_polygons,p_polygon);
     }
+  calculation_coordinates(amount_polygons,p_polygon);
 }
 void P_S(int amount_polygons,polygon* p_polygon){
     for(int i=0;i<amount_polygons;++i)
@@ -172,17 +170,6 @@ void max_perimetr(int amount_polygons,polygon* p_polygon)
   }
   cout<<"\n";
 }
- void output_coordinates(int amount_polygons,polygon *p_polygon)
- {
-     for(int i=0;i<amount_polygons;++i)
-     {
-        cout<<"\n"<<"Polygon number:"<<i+1<<"\n";
-        cout<<"X=";
-        cout<<p_polygon[i].x1<<"\n";
-        cout<<"Y=";
-        cout<<p_polygon[i].y1<<"\n";
-     }
- }
 void delete_polygon(int amount_polygons,polygon *p_polygon)
 {
   int number_polygon;
@@ -193,6 +180,20 @@ void delete_polygon(int amount_polygons,polygon *p_polygon)
       p_polygon[i]=p_polygon[i+1];
     }
   amount_polygons--;
+  polygon *new_p_polygon = new polygon[amount_polygons];
+  for(int i=0;i<amount_polygons-1;++i)
+    {
+      new_p_polygon[i]=p_polygon[i];
+    }
+  delete[] p_polygon;
+  p_polygon=new_p_polygon;
+}
+void new_page()
+{ 
+  for(int i=0;i<100;++i)
+    {
+      cout<<"\n";
+    }
 }
 void submenu(int amount_polygons,polygon *p_polygon)
 {
@@ -207,16 +208,19 @@ void submenu(int amount_polygons,polygon *p_polygon)
   switch(choice_submenu)
     {
       case 1:
+      new_page();
       P_S(amount_polygons,p_polygon);
       max_square(amount_polygons,p_polygon);
       break;
 
       case 2:
+      new_page();
       P_S(amount_polygons,p_polygon);
       max_perimetr(amount_polygons,p_polygon);
       break;
 
       case 3:
+      new_page();
       exit_sub++;
       break;
 
@@ -244,25 +248,30 @@ void menu(int amount_polygons,polygon *p_polygon)
     {
 
       case 1:
+      new_page();
       current++;
       input(current,amount_polygons,p_polygon);
       break;
 
       case 2:
+      new_page();
       P_S(amount_polygons,p_polygon);
       output(current,amount_polygons,p_polygon);
       break;
 
       case 3:
+      new_page();
       delete_polygon(amount_polygons,p_polygon);
       current--;
       break;
 
       case 4:
+      new_page();
       submenu(amount_polygons,p_polygon);
       break;
 
       case 5:
+      new_page();
       cout<<"Are you sure to exit? If yes press 1 if no press 2\n";
       int choice_exit;
       cin>>choice_exit;
@@ -272,6 +281,7 @@ void menu(int amount_polygons,polygon *p_polygon)
       }
       if(choice_exit==2)
       {
+        new_page();
         menu(amount_polygons,p_polygon);
       }
       break;
@@ -281,11 +291,9 @@ void menu(int amount_polygons,polygon *p_polygon)
     }
   }
 }
-
 int main(){
-    int amount_polygons;
-    cout<<"Enter amount of polygons";
-    cin>>amount_polygons;
-    polygon *p_polygon=new polygon[amount_polygons];
+    int amount_polygons=0;
+    polygon *p_polygon=NULL;
     menu(amount_polygons,p_polygon);
 }
+ 
