@@ -4,7 +4,7 @@
 using namespace std;
 struct polygon
 {
-  double modul_side;
+  double lenght_side;
   int amount_angles;
   double P;
   double S;
@@ -23,30 +23,6 @@ void input_coordinates(int current,int amount_polygons,polygon *p_polygon)
         cin>>p_polygon[current-1].y1;
      }
  }
-void calculation_coordinates(int amount_polygons, polygon *p_polygon) {
-    for (int i = 0; i < amount_polygons; ++i) {
-        double R;
-        double dxR;
-        double dyR;
-        double xR;
-        double yR;
-        double k;
-        R = p_polygon[i].modul_side / (2 * sin(M_PI / p_polygon[i].amount_angles));
-        k = atan(p_polygon[i].y1 / p_polygon[i].x1);
-        dxR = R * cos(k);
-        dyR = R * sin(k);
-        xR = p_polygon[i].x1 - dxR;
-        yR = p_polygon[i].y1 - dyR;
-        double angle = 2 * M_PI / p_polygon[i].amount_angles;
-        cout << "Coordinates of polygon " << i + 1 << ":\n";
-        for (int j = 1; j < p_polygon[i].amount_angles; ++j) {
-            double NewAngle = 2 * M_PI - j * angle;
-            double Next_X = xR + R * cos(NewAngle);
-            double Next_Y = yR + R * sin(NewAngle);
-            cout << "Vertex " << j + 1 << ": " << Next_X << ";" << Next_Y << "\n";
-        }
-    }
-}
 void input(int current,int &amount_polygons,polygon *&p_polygon) {
   amount_polygons++;
   polygon *new_p_polygon = new polygon[amount_polygons];
@@ -59,42 +35,68 @@ void input(int current,int &amount_polygons,polygon *&p_polygon) {
   for(int i=current-1;i<current;i++)
     {
       cout<<"Polygon  "<<i+1<<"\n";
-      cout<<"Enter modul of side";
-      cin>>p_polygon[i].modul_side;
+      cout<<"Enter lenght of side";
+      cin>>p_polygon[i].lenght_side;
       cout<<"Amount of angles";
+      do{
       cin>>p_polygon[i].amount_angles;
+      if(p_polygon[i].amount_angles<3)
+      {
+        cout<<"Amount of angles must be more than 2, Try again";
+      }
+      }
+      while(p_polygon[i].amount_angles<3);
       input_coordinates(current,amount_polygons,p_polygon);
     }
 }
 void output(int current,int amount_polygons,polygon *p_polygon)
 {
-    for(int i=0;i<current;++i)
-    {
-        cout<<"\n"<<"Polygon:"<<i+1<<"\n";
-        cout <<"Modul side="<<p_polygon[i].modul_side<<"\n";
-        cout <<"Amount angles="<<p_polygon[i].amount_angles<<"\n";
-        cout <<"Perimeter of polygon="<<p_polygon[i].P<<"\n";
-        cout<<"Area of polygon="<<p_polygon[i].S<<"\n";
+    for(int i=0;i<amount_polygons;++i)
+    { 
+      cout<<"\n"<<"Polygon:"<<i+1<<"\n";
+      cout <<"Modul side="<<p_polygon[i].lenght_side<<"\n";
+      cout <<"Amount angles="<<p_polygon[i].amount_angles<<"\n";
+      cout <<"Perimeter of polygon="<<p_polygon[i].P<<"\n";
+      cout<<"Area of polygon="<<p_polygon[i].S<<"\n";
+      double R=p_polygon[i].lenght_side/(2*sin(M_PI/p_polygon[i].amount_angles));
+      double k=atan2(p_polygon[i].x1,p_polygon[i].y1);
+      double xc=p_polygon[i].x1-R*cos(k);
+      double yc=p_polygon[i].y1-R*sin(k);
+      double New_X;
+      double New_Y;
+      cout<<"Vertex 1:  "<<p_polygon[i].x1<<";"<<p_polygon[i].y1<<"\n";
+      for(int j=1;j<p_polygon[i].amount_angles;j++){
+         double angle= 2*M_PI*j/p_polygon[i].amount_angles;
+         New_X=xc+R*cos(k+angle);
+         New_Y=yc+R*sin(k+angle);
+        if((pow(New_X,2)+pow(New_Y,2))-(pow(p_polygon[i].x1,2)+pow(p_polygon[i].y1,2))>0)
+        {
+          cout<<"Its impossible"<<"\n";
+          return;
+        }
+        cout<<"Vertex:"<<j+1<<"  ";
+        cout<<New_X<<;<<New_Y<<"\n";
+      }
     }
-  calculation_coordinates(amount_polygons,p_polygon);
 }
+
 void P_S(int amount_polygons,polygon* p_polygon){
     for(int i=0;i<amount_polygons;++i)
       {
         if(p_polygon[i].amount_angles==3)
         {
-          p_polygon[i].P=3*p_polygon[i].modul_side;
-          p_polygon[i].S=sqrt(3)/4*pow(p_polygon[i].modul_side,2);
+          p_polygon[i].P=3*p_polygon[i].lenght_side;
+          p_polygon[i].S=sqrt(3)/4*pow(p_polygon[i].lenght_side,2);
         }
         if(p_polygon[i].amount_angles==4)
         {
-          p_polygon[i].P=4*p_polygon[i].modul_side;
-          p_polygon[i].S=pow(p_polygon[i].modul_side,2);
+          p_polygon[i].P=4*p_polygon[i].lenght_side;
+          p_polygon[i].S=pow(p_polygon[i].lenght_side,2);
         }
         if(p_polygon[i].amount_angles>4)
         {
-          p_polygon[i].P=p_polygon[i].amount_angles*p_polygon[i].modul_side;
-          p_polygon[i].S=p_polygon[i].amount_angles*pow(p_polygon[i].modul_side,2)/(4*tan(M_PI/p_polygon[i].amount_angles));
+          p_polygon[i].P=p_polygon[i].amount_angles*p_polygon[i].lenght_side;
+          p_polygon[i].S=p_polygon[i].amount_angles*pow(p_polygon[i].lenght_side,2)/(4*tan(M_PI/p_polygon[i].amount_angles));
         }
       }
 }
@@ -106,7 +108,7 @@ void max_square(int amount_polygons,polygon* p_polygon)
   int array_number_max_square[amount_polygons];
   for(int i=1;i<amount_polygons;++i)
     {
-      if(p_polygon[i].S>p_polygon[number_max_s].S)
+      if(p_polygon[i].S-p_polygon[number_max_s].S>=0)
       {
         number_max_s=i;
         max_square=p_polygon[i].S;
@@ -142,7 +144,7 @@ void max_perimetr(int amount_polygons,polygon* p_polygon)
   int array_number_max_perimeter[amount_polygons];
   for(int i=1;i<amount_polygons;++i)
     {
-      if(p_polygon[i].P>p_polygon[number_max_p].P)
+      if(p_polygon[i].P-p_polygon[number_max_p].P>=0)
       {
         number_max_p=i;
         max_perimeter=p_polygon[i].P;
@@ -170,23 +172,32 @@ void max_perimetr(int amount_polygons,polygon* p_polygon)
   }
   cout<<"\n";
 }
-void delete_polygon(int amount_polygons,polygon *p_polygon)
+void delete_polygon(int& amount_polygons, polygon*& p_polygon)
 {
   int number_polygon;
-  cout<<"Enter number of polygon";
-  cin>>number_polygon;
-  for(int i=number_polygon-1;i<amount_polygons;++i)
-    {
-      p_polygon[i]=p_polygon[i+1];
-    }
-  amount_polygons--;
-  polygon *new_p_polygon = new polygon[amount_polygons];
-  for(int i=0;i<amount_polygons-1;++i)
-    {
-      new_p_polygon[i]=p_polygon[i];
-    }
+  cout << "Enter number of polygon: ";
+  cin >> number_polygon;
+  if (number_polygon < 1 || number_polygon > amount_polygons)
+  {
+    cout << "No polygon with this number";
+    return;
+  }
+
+  polygon* new_p_polygon = new polygon[amount_polygons - 1];
+
+  for (int i = 0; i < number_polygon - 1; ++i)
+  {
+    new_p_polygon[i] = p_polygon[i];
+  }
+
+  for (int i = number_polygon; i < amount_polygons; ++i)
+  {
+    new_p_polygon[i - 1] = p_polygon[i];
+  }
+
   delete[] p_polygon;
-  p_polygon=new_p_polygon;
+  p_polygon = new_p_polygon;
+  amount_polygons--;
 }
 void new_page()
 { 
