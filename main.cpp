@@ -30,7 +30,7 @@ void input(int current,int &amount_polygons,polygon *&p_polygon) {
     {
       new_p_polygon[i]=p_polygon[i];
     }
-  delete[] p_polygon;
+  delete p_polygon;
   p_polygon=new_p_polygon;
   for(int i=current-1;i<current;i++)
     {
@@ -52,31 +52,53 @@ void input(int current,int &amount_polygons,polygon *&p_polygon) {
 void output(int current,int amount_polygons,polygon *p_polygon)
 {
     for(int i=0;i<amount_polygons;++i)
-    { 
+    {
       cout<<"\n"<<"Polygon:"<<i+1<<"\n";
-      cout <<"Modul side="<<p_polygon[i].lenght_side<<"\n";
+      cout <<"Lenght of side="<<p_polygon[i].lenght_side<<"\n";
       cout <<"Amount angles="<<p_polygon[i].amount_angles<<"\n";
       cout <<"Perimeter of polygon="<<p_polygon[i].P<<"\n";
       cout<<"Area of polygon="<<p_polygon[i].S<<"\n";
-      double R=p_polygon[i].lenght_side/(2*sin(M_PI/p_polygon[i].amount_angles));
-      double k=atan2(p_polygon[i].x1,p_polygon[i].y1);
-      double xc=p_polygon[i].x1-R*cos(k);
-      double yc=p_polygon[i].y1-R*sin(k);
-      double New_X;
-      double New_Y;
-      cout<<"Vertex 1:  "<<p_polygon[i].x1<<";"<<p_polygon[i].y1<<"\n";
-      for(int j=1;j<p_polygon[i].amount_angles;j++){
-         double angle= 2*M_PI*j/p_polygon[i].amount_angles;
-         New_X=xc+R*cos(k+angle);
-         New_Y=yc+R*sin(k+angle);
-        if((pow(New_X,2)+pow(New_Y,2))-(pow(p_polygon[i].x1,2)+pow(p_polygon[i].y1,2))>0)
+      double R;
+      double dxR;
+      double dyR;
+      double xR;
+      double yR;
+      double k;
+      double modx1=fabs(p_polygon[i].x1);
+      double mody1=fabs(p_polygon[i].y1);
+      int flagX=1;
+      int flagY=1;
+      if(p_polygon[i].x1<0){flagX=-1;}
+      if(p_polygon[i].y1<0){flagY=-1;}
+      R = p_polygon[i].lenght_side/(2*sin(M_PI/p_polygon[i].amount_angles));
+      if(((sqrt(pow(modx1,double(2))+(mody1,double(2))))-R)<0)
         {
-          cout<<"Its impossible"<<"\n";
-          return;
+            cout<<"Error coordinate\n";
+            continue;
         }
-        cout<<"Vertex:"<<j+1<<"  ";
-        cout<<New_X<<;<<New_Y<<"\n";
-      }
+      k=atan((mody1)/(modx1));
+      dxR=R*cos(k);
+      dyR=R*sin(k);
+      xR=modx1-dxR;
+      yR=mody1-dyR;
+      double angle=2*M_PI/p_polygon[i].amount_angles;
+      cout<<"Coordinates of polygon: "<<i+1<<"\n";
+      cout<<"Vertex 1: "<<p_polygon[i].x1<<";"<<p_polygon[i].y1<<"\n";
+      for(int j=1;j<p_polygon[i].amount_angles;++j)
+      {
+         if(flagX != flagY){
+            double NewAngle=((atan(mody1/modx1))-(j)*angle);
+            double Next_X=xR+R*cos(NewAngle);
+            double Next_Y=yR+R*sin(NewAngle);
+            cout<<"Vertex"<<1+j<<": " <<Next_X*flagX<<";"<<Next_Y*flagY<<"\n";
+          }else{
+            double NewAngle=atan(mody1/modx1)+(j)*angle;
+            double Next_X=xR+R*cos(NewAngle);
+            double Next_Y=yR+R*sin(NewAngle);
+            cout<<"Vertex"<<1+j<<": " <<Next_X*flagX<<";"<<Next_Y*flagY<<"\n";
+          }
+
+        }
     }
 }
 
@@ -195,12 +217,12 @@ void delete_polygon(int& amount_polygons, polygon*& p_polygon)
     new_p_polygon[i - 1] = p_polygon[i];
   }
 
-  delete[] p_polygon;
+  delete p_polygon;
   p_polygon = new_p_polygon;
   amount_polygons--;
 }
 void new_page()
-{ 
+{
   for(int i=0;i<100;++i)
     {
       cout<<"\n";
@@ -306,5 +328,5 @@ int main(){
     int amount_polygons=0;
     polygon *p_polygon=NULL;
     menu(amount_polygons,p_polygon);
+    delete p_polygon;
 }
- 
