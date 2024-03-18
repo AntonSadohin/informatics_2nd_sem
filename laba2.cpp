@@ -4,42 +4,66 @@
 using namespace std;
 class Vehicle{
 private:
-
-
-public:
 char name[30];
 int amount_wheels;
-double speed;
-double fuel_consumption;
 double mileage;
 double volume_tank;
 double power;
-Vehicle( ){
-  {
-  cout<<"Vehicle created"<<"\n";
-  }
-}
-~Vehicle( )
+double travel_time;
+public:
+double speed;
+double fuel_consumption;
+void Set_name(char carname[30])
 {
-  cout<<"Vehicle deleted"<<"\n";
+  strcpy(name,carname);
 }
-
-};
-void input(int amount_vehicles,Vehicle *vehicles)
+char Get_name()
 {
-  for(int i=0;i<amount_vehicles;i++)
-  {
-    cout << "Enter the name of the vehicle: ";
-    cin >> vehicles[i].name;
-    cout << "Enter the amount of wheels: ";
-    cin >> vehicles[i].amount_wheels;
-    cout << "Enter the mileage: ";
-    cin >> vehicles[i].mileage;
-    cout << "Enter the volume of the tank: ";
-    cin >> vehicles[i].volume_tank;
-    cout << "Enter the power: ";
-    cin >> vehicles[i].power;
-  }
+  for(int i=0;i<30;i++)
+    {
+      cout<<name[i];
+    }
+  return 0;
+}
+void Set_amount_wheels(int amount_wheels)
+{
+  this->amount_wheels=amount_wheels;
+}
+int Get_amount_wheels()
+{
+  return amount_wheels;
+}
+void Set_mileage(double mileage)
+{
+  this->mileage=mileage;
+}
+double Get_mileage()
+{
+  return mileage;
+}
+void Set_volume_tank(double volume_tank)
+{
+  this->volume_tank=volume_tank;
+}
+double Get_volume_tank()
+{
+  return volume_tank;
+}
+void Set_power(double power)
+{
+  this->power=power;
+}
+double Get_power()
+{
+  return power;
+}
+void Set_travel_time(double travel_time)
+{
+  this->travel_time=travel_time;
+}
+double Get_travel_time()
+{
+  return travel_time;
 }
 void determination_speed(int amount_vehicles,Vehicle *vehicles)
 {
@@ -52,14 +76,7 @@ void determination_fuel_consumption(int amount_vehicles,Vehicle *vehicles)
 {
   for(int i=0;i<amount_vehicles;i++)
     {
-      vehicles[i].fuel_consumption=(pow(vehicles[i].power,1/3)+sqrt(vehicles[i].power))-6.25;
-    }
-}
-void output(int amount_vehicles,Vehicle *vehicles)
-{
-  for(int i=0;i<amount_vehicles;i++)
-    {
-      cout<<vehicles[i].name<<": "<<vehicles[i].amount_wheels<<"wheels"<<","<<vehicles[i].power<<"horsepower"<<"/"<<vehicles[i].speed<<"km/h"<<"/"<<vehicles[i].fuel_consumption<<"l/100km"<<"\n";
+      vehicles[i].fuel_consumption=((pow(vehicles[i].power,1/3)+sqrt(vehicles[i].power))-6.25);
     }
 }
 void Determination_track(int lenght_of_the_track,Vehicle *vehicles,int amount_vehicles)
@@ -70,7 +87,7 @@ void Determination_track(int lenght_of_the_track,Vehicle *vehicles,int amount_ve
   double refuelings_double[amount_vehicles];
   for(int i=0;i<amount_vehicles;i++)
     {
-      refuelings_double[i]=(((lenght_of_the_track/100)*vehicles[i].fuel_consumption)/vehicles[i].volume_tank);
+      refuelings_double[i]=(((lenght_of_the_track/100)*vehicles[i].fuel_consumption)/vehicles[i].Get_volume_tank());
       number_of_refuelings[i]=(int)refuelings_double[i];
     }
   for(int i=0;i<amount_vehicles;i++)
@@ -85,7 +102,7 @@ void Determination_track(int lenght_of_the_track,Vehicle *vehicles,int amount_ve
     {
       for(int j=0;j<amount_vehicles-1;++j)
       {
-        
+
           if(time_of_the_race[j]>time_of_the_race[j+1])
         {
           double temp=time_of_the_race[j];
@@ -126,6 +143,64 @@ void Determination_track(int lenght_of_the_track,Vehicle *vehicles,int amount_ve
     cout<<"\n";
   }
 }
+
+Vehicle( ){
+  {
+  cout<<"Vehicle created"<<"\n";
+  }
+}
+~Vehicle( )
+{
+  cout<<"Vehicle deleted"<<"\n";
+}
+
+};
+void input(int amount_vehicles,Vehicle *vehicles)
+{
+  for(int i=0;i<amount_vehicles;i++)
+  {
+    char name[30];
+    int amount_wheels;
+    double mileage;
+    double volume_tank;
+    double power;
+    double travel_time;
+    cout<<"Enter name of the car: ";
+    cin>>name;
+    vehicles[i].Set_name(name);
+    cout<<"Enter amount of wheels: ";
+    cin>>amount_wheels;
+    vehicles[i].Set_amount_wheels(amount_wheels);
+    cout<<"Enter mileage: ";
+    cin>>mileage;
+    vehicles[i].Set_mileage(mileage);
+    cout<<"Enter volume of tank: ";
+    cin>>volume_tank;
+    vehicles[i].Set_volume_tank(volume_tank);
+    cout<<"Enter power: ";
+    cin>>power;
+    vehicles[i].Set_power(power);
+    cout<<"Enter travel time (in hours): ";
+    cin>>travel_time;
+    vehicles[i].Set_travel_time(travel_time);
+    cout<<"\n";
+    
+  }
+}
+void output(int amount_vehicles,Vehicle *vehicles)
+{
+  for(int i=0;i<amount_vehicles;i++)
+    {
+      cout<<"Name: "<<vehicles[i].Get_name()<<"\n";
+      cout<<"Amount of wheels: "<<vehicles[i].Get_amount_wheels()<<"\n";
+      cout<<"Mileage: "<<vehicles[i].Get_mileage()<<"\n";
+      cout<<"Speed: "<<vehicles[i].speed<<"\n";
+      cout<<"Volume of tank: "<<vehicles[i].Get_volume_tank()<<"\n";
+      cout<<"Fuel consumption: "<<vehicles[i].fuel_consumption<<"\n";
+      cout<<"Power: "<<vehicles[i].Get_power()<<"\n";
+      cout<<"Travel time: "<<vehicles[i].Get_travel_time()<<"\n";
+    }
+ }
 void new_page()
 {
   for(int i=0;i<100;++i)
@@ -153,8 +228,11 @@ void menu(int amount_vehicles,Vehicle *vehicles,int lenght_of_the_track)
     case 1:
       new_page();
       input(amount_vehicles,vehicles);
-      determination_speed(amount_vehicles,vehicles);
-      determination_fuel_consumption(amount_vehicles,vehicles);
+      for(int i=car-1;i<car;++i)
+      {
+      vehicles[i].determination_fuel_consumption(amount_vehicles, vehicles);
+      vehicles[i].determination_speed(amount_vehicles, vehicles);
+      }
       car++;
       break;
     case 2:
@@ -184,7 +262,7 @@ void menu(int amount_vehicles,Vehicle *vehicles,int lenght_of_the_track)
         break;
       }
       new_page();
-      Determination_track(lenght_of_the_track,vehicles,amount_vehicles);
+      vehicles[0].Determination_track(lenght_of_the_track,vehicles,amount_vehicles);
       determination_complete++;
       break;
     
