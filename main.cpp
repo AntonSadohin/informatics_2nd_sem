@@ -1,6 +1,5 @@
 #include <iostream>
 #include <math.h>
-#define PI 3.14159265358979323846
 using namespace std;
 struct polygon
 {
@@ -14,13 +13,22 @@ struct polygon
 
 void input_coordinates(int current,int amount_polygons,polygon *p_polygon)
  {
-     for(int i=current-1;i<current;++i)
+     for(int i=amount_polygons-1;i<amount_polygons;++i)
      {
+        double Radius = p_polygon[i].lenght_side/(2*sin(M_PI/p_polygon[i].amount_angles));
         cout<<"\n"<<"Polygon number:"<<i+1<<"\n";
         cout<<"Enter coordinate x of the farest polygon vertex";
-        cin>>p_polygon[current-1].x1;
-        cout<<"Enter coordinate y of the farest polygon vertex";
-        cin>>p_polygon[current-1].y1;
+        cin>>p_polygon[amount_polygons-1].x1;
+        double y=sqrt(pow(Radius,2)-pow(p_polygon[amount_polygons-1].x1,2));
+        cout<<"Enter coordinate y of the farest polygon vertex"<<"  ";
+        cout<<"Y must be more than  "<<y<<"\n";
+        cin>>p_polygon[amount_polygons-1].y1;
+        
+       if((sqrt(pow(p_polygon[i].x1, 2) + pow(p_polygon[i].y1, 2)) - Radius) < 0)
+         {
+             cout<<"Error coordinate\n";
+             input_coordinates(current,amount_polygons,p_polygon);
+         }
      }
  }
 void input(int current,int &amount_polygons,polygon *&p_polygon) {
@@ -32,7 +40,7 @@ void input(int current,int &amount_polygons,polygon *&p_polygon) {
     }
   delete p_polygon;
   p_polygon=new_p_polygon;
-  for(int i=current-1;i<current;i++)
+  for(int i=amount_polygons-1;i<amount_polygons;i++)
     {
       cout<<"Polygon  "<<i+1<<"\n";
       cout<<"Enter lenght of side";
@@ -51,6 +59,10 @@ void input(int current,int &amount_polygons,polygon *&p_polygon) {
 }
 void output(int current,int amount_polygons,polygon *p_polygon)
 {
+  if(amount_polygons==0)
+  {
+    cout<<"No polygons\n";
+  }
     for(int i=0;i<amount_polygons;++i)
     {
       cout<<"\n"<<"Polygon:"<<i+1<<"\n";
@@ -71,11 +83,6 @@ void output(int current,int amount_polygons,polygon *p_polygon)
       if(p_polygon[i].x1<0){flagX=-1;}
       if(p_polygon[i].y1<0){flagY=-1;}
       R = p_polygon[i].lenght_side/(2*sin(M_PI/p_polygon[i].amount_angles));
-      if(((sqrt(pow(modx1,double(2))+(mody1,double(2))))-R)<0)
-        {
-            cout<<"Error coordinate\n";
-            continue;
-        }
       k=atan((mody1)/(modx1));
       dxR=R*cos(k);
       dyR=R*sin(k);
@@ -101,101 +108,107 @@ void output(int current,int amount_polygons,polygon *p_polygon)
         }
     }
 }
-
-void P_S(int amount_polygons,polygon* p_polygon){
+void P(int amount_polygons,polygon *p_polygon)
+{
+  for(int i=0;i<amount_polygons;++i)
+    {
+      p_polygon[i].P=p_polygon[i].lenght_side*p_polygon[i].amount_angles;
+    }
+}
+void S(int amount_polygons,polygon* p_polygon){
     for(int i=0;i<amount_polygons;++i)
       {
         if(p_polygon[i].amount_angles==3)
         {
-          p_polygon[i].P=3*p_polygon[i].lenght_side;
           p_polygon[i].S=sqrt(3)/4*pow(p_polygon[i].lenght_side,2);
         }
         if(p_polygon[i].amount_angles==4)
         {
-          p_polygon[i].P=4*p_polygon[i].lenght_side;
           p_polygon[i].S=pow(p_polygon[i].lenght_side,2);
         }
         if(p_polygon[i].amount_angles>4)
         {
-          p_polygon[i].P=p_polygon[i].amount_angles*p_polygon[i].lenght_side;
-          p_polygon[i].S=p_polygon[i].amount_angles*pow(p_polygon[i].lenght_side,2)/(4*tan(M_PI/p_polygon[i].amount_angles));
+p_polygon[i].S=p_polygon[i].amount_angles*pow(p_polygon[i].lenght_side,2)/(4*tan(M_PI/p_polygon[i].amount_angles));
         }
       }
 }
-void max_square(int amount_polygons,polygon* p_polygon)
+void max_p_max_s(int amount_polygons,polygon *p_polygon,int p)
 {
-  int number_max_s=0;
-  double max_square=p_polygon[0].S;
-  int max_square_polygons=0;
-  int array_number_max_square[amount_polygons];
-  for(int i=1;i<amount_polygons;++i)
-    {
-      if(p_polygon[i].S-p_polygon[number_max_s].S>=0)
-      {
-        number_max_s=i;
-        max_square=p_polygon[i].S;
-      }
-    }
-  for(int i=0;i<amount_polygons;++i)
-    {
-      if((p_polygon[i].S==max_square)&&(amount_polygons!=0))
-      {
-        max_square_polygons++;
-        array_number_max_square[i]=i+1;
-      }
-    }
-  if(max_square_polygons==1)
+  if(amount_polygons==0)
   {
-    cout<<"Polygon with max square is polygon number:"<<number_max_s+1;
+    cout<<"No polygons\n";
   }
-  if(max_square_polygons>1)
+  double max_value=0;
+  int max_value_index[amount_polygons];
+  int amount_max=0;
+  if(p==1)
   {
-    cout<<"Polygons with max square:\n";
-    for(int i=0;i<max_square_polygons;++i)
+    for(int i=0; i<amount_polygons;++i)
       {
-        cout<<"Polygon number:"<<array_number_max_square[i]<<"\n";
+        if(p_polygon[i].P-max_value>0)
+        {
+          max_value=p_polygon[i].P;
+        }
       }
-  }
-  cout<<"\n";
-}
-void max_perimetr(int amount_polygons,polygon* p_polygon)
-{
-  int number_max_p=0;
-  double max_perimeter=p_polygon[0].P;
-  int max_perimeter_polygons=0;
-  int array_number_max_perimeter[amount_polygons];
-  for(int i=1;i<amount_polygons;++i)
+    for(int i=0;i<amount_polygons;++i)
+      {
+        if(p_polygon[i].P==max_value)
+        {
+          max_value_index[amount_max]=i;
+          amount_max++;
+        }
+      }
+    if(amount_max==1)
     {
-      if(p_polygon[i].P-p_polygon[number_max_p].P>=0)
-      {
-        number_max_p=i;
-        max_perimeter=p_polygon[i].P;
-      }
+      cout<<"Polygon with max perimeter is polygon number "<<max_value_index[0]+1<<"\n";
     }
-  for(int i=0;i<amount_polygons;++i)
+    if(amount_max>1)
     {
-      if(p_polygon[i].P==max_perimeter)
-      {
-        max_perimeter_polygons++;
-        array_number_max_perimeter[i]=i+1;
-      }
+      cout<<"Polygons with max perimeter:\n";
+        for(int i=0;i<amount_max;++i)
+        {
+          cout<<max_value_index[i]+1<<"\n";
+        }
     }
-  if(max_perimeter_polygons==1)
-  {
-    cout<<"Polygon with max perimeter is polygon number:"<<number_max_p+1;
   }
-  if(max_perimeter_polygons>1)
+  if(p==0)
   {
-    cout<<"Polygons with max perimeter:\n";
-    for(int i=0;i<max_perimeter_polygons;++i)
+    for(int i=0; i<amount_polygons;++i)
       {
-        cout<<"Polygon number:"<<array_number_max_perimeter[i]<<"\n";
+        if(p_polygon[i].P-max_value>0)
+        {
+          max_value=p_polygon[i].S;
+        }
       }
+    for(int i=0;i<amount_polygons;++i)
+      {
+        if(p_polygon[i].S==max_value)
+        {
+          max_value_index[amount_max]=i;
+          amount_max++;
+        }
+      }
+    if(amount_max==1)
+    {
+      cout<<"Polygon with max square is polygon number "<<max_value_index[0]+1<<"\n";
+    }
+    if(amount_max>1)
+    {
+      cout<<"Polygons with max square:\n";
+        for(int i=0;i<amount_max;++i)
+        {
+          cout<<max_value_index[i]+1<<"\n";
+        }
+    }
   }
-  cout<<"\n";
 }
 void delete_polygon(int& amount_polygons, polygon*& p_polygon)
 {
+  if(amount_polygons==0)
+  {
+    cout<<"No polygons\n";
+    return;
+  }
   int number_polygon;
   cout << "Enter number of polygon: ";
   cin >> number_polygon;
@@ -217,7 +230,7 @@ void delete_polygon(int& amount_polygons, polygon*& p_polygon)
     new_p_polygon[i - 1] = p_polygon[i];
   }
 
-  delete p_polygon;
+  delete[] p_polygon;
   p_polygon = new_p_polygon;
   amount_polygons--;
 }
@@ -238,18 +251,24 @@ void submenu(int amount_polygons,polygon *p_polygon)
   cout<<"2.Determine polygon with max perimeter\n";
   cout<<"3.Return to previous menu\n";
   cin>>choice_submenu;
+  int p=1;
   switch(choice_submenu)
     {
+  
       case 1:
       new_page();
-      P_S(amount_polygons,p_polygon);
-      max_square(amount_polygons,p_polygon);
+      P(amount_polygons,p_polygon);
+      S(amount_polygons,p_polygon);
+      p=0;
+      max_p_max_s(amount_polygons,p_polygon,p);
       break;
 
       case 2:
       new_page();
-      P_S(amount_polygons,p_polygon);
-      max_perimetr(amount_polygons,p_polygon);
+      P(amount_polygons,p_polygon);
+      S(amount_polygons,p_polygon);
+      p=1;
+      max_p_max_s(amount_polygons,p_polygon,p);
       break;
 
       case 3:
@@ -288,7 +307,8 @@ void menu(int amount_polygons,polygon *p_polygon)
 
       case 2:
       new_page();
-      P_S(amount_polygons,p_polygon);
+      P(amount_polygons,p_polygon);
+      S(amount_polygons,p_polygon);
       output(current,amount_polygons,p_polygon);
       break;
 
@@ -328,5 +348,5 @@ int main(){
     int amount_polygons=0;
     polygon *p_polygon=NULL;
     menu(amount_polygons,p_polygon);
-    delete p_polygon;
+    delete[] p_polygon;
 }
