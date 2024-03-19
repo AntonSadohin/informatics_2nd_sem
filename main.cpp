@@ -10,7 +10,11 @@ struct polygon
   double x1;
   double y1;
 };
-
+void ignoreLine()
+{
+    cin.clear();
+    cin.ignore();
+}
 void input_coordinates(int current,int amount_polygons,polygon *p_polygon)
  {
      for(int i=amount_polygons-1;i<amount_polygons;++i)
@@ -19,11 +23,20 @@ void input_coordinates(int current,int amount_polygons,polygon *p_polygon)
         cout<<"\n"<<"Polygon number:"<<i+1<<"\n";
         cout<<"Enter coordinate x of the farest polygon vertex";
         cin>>p_polygon[amount_polygons-1].x1;
+        while (cin.fail()) {
+            ignoreLine();
+            cout << "You have entered a character, please enter a number" << endl;
+            cin >> p_polygon[amount_polygons-1].x1;
+        }
         double y=sqrt(pow(Radius,2)-pow(p_polygon[amount_polygons-1].x1,2));
         cout<<"Enter coordinate y of the farest polygon vertex"<<"  ";
         cout<<"Y must be more than  "<<y<<"\n";
         cin>>p_polygon[amount_polygons-1].y1;
-        
+       while (cin.fail()) {
+           ignoreLine();
+           cout << "You have entered a character, please enter a number" << endl;
+           cin >> p_polygon[amount_polygons-1].y1;
+       }
        if((sqrt(pow(p_polygon[i].x1, 2) + pow(p_polygon[i].y1, 2)) - Radius) < 0)
          {
              cout<<"Error coordinate\n";
@@ -44,10 +57,27 @@ void input(int current,int &amount_polygons,polygon *&p_polygon) {
     {
       cout<<"Polygon  "<<i+1<<"\n";
       cout<<"Enter lenght of side";
+      do{
       cin>>p_polygon[i].lenght_side;
+        while (cin.fail()) {
+          ignoreLine();
+          cout << "You have entered a character, please enter a number" << endl;
+          cin >> p_polygon[i].lenght_side;
+        }
+      if(p_polygon[i].lenght_side<0)
+      {
+        cout<<"Error lenght of side, side must be more than 0, Try again\n";
+      }
+      }
+      while(p_polygon[i].lenght_side<0);
       cout<<"Amount of angles";
       do{
       cin>>p_polygon[i].amount_angles;
+        while (cin.fail()) {
+          ignoreLine();
+          cout << "You have entered a character, please enter a number" << endl;
+          cin >> p_polygon[i].amount_angles;
+        }
       if(p_polygon[i].amount_angles<3)
       {
         cout<<"Amount of angles must be more than 2, Try again";
@@ -212,9 +242,14 @@ void delete_polygon(int& amount_polygons, polygon*& p_polygon)
   int number_polygon;
   cout << "Enter number of polygon: ";
   cin >> number_polygon;
+  while (cin.fail()) {
+    ignoreLine();
+    cout << "You have entered a character, please enter a number" << endl;
+    cin >> number_polygon;
+  }
   if (number_polygon < 1 || number_polygon > amount_polygons)
   {
-    cout << "No polygon with this number";
+    cout << "No polygon with this number\n";
     return;
   }
 
@@ -251,6 +286,11 @@ void submenu(int amount_polygons,polygon *p_polygon)
   cout<<"2.Determine polygon with max perimeter\n";
   cout<<"3.Return to previous menu\n";
   cin>>choice_submenu;
+    while (cin.fail()) {
+      ignoreLine();
+      cout << "You have entered a character, please enter a number" << endl;
+      cin >> choice_submenu;
+    }
   int p=1;
   switch(choice_submenu)
     {
@@ -296,6 +336,11 @@ void menu(int amount_polygons,polygon *p_polygon)
   cout<<"4.Submenu max square and max perimetr\n";
   cout<<"5.Exit\n";
   cin>>choice;
+    while (cin.fail()) {
+      ignoreLine();
+      cout << "You have entered a character, please enter a number" << endl;
+      cin >> choice;;
+    }
   switch(choice)
     {
 
