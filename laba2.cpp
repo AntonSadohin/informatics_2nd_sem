@@ -13,6 +13,7 @@ double travel_time;
 public:
 double speed;
 double fuel_consumption;
+Vehicle(int amount_vehicles,Vehicle* vehicles);
 void Set_name(char carname[30])
 {
   strcpy(name,carname);
@@ -155,7 +156,12 @@ Vehicle( ){
 }
 
 };
-void input(int amount_vehicles,Vehicle *vehicles)
+void ignoreLine()
+{
+    cin.clear();
+    cin.ignore();
+}
+Vehicle::Vehicle(int amount_vehicles,Vehicle* vehicles)
 {
   for(int i=0;i<amount_vehicles;i++)
   {
@@ -170,21 +176,46 @@ void input(int amount_vehicles,Vehicle *vehicles)
     vehicles[i].Set_name(name);
     cout<<"Enter amount of wheels: ";
     cin>>amount_wheels;
+    while (cin.fail()) {
+         ignoreLine();
+         cout << "You have entered a character, please enter a number" << endl;
+         cin >> amount_wheels;
+     }
     vehicles[i].Set_amount_wheels(amount_wheels);
     cout<<"Enter mileage: ";
     cin>>mileage;
+    while (cin.fail()) {
+       ignoreLine();
+       cout << "You have entered a character, please enter a number" << endl;
+       cin >> mileage;
+    }
     vehicles[i].Set_mileage(mileage);
     cout<<"Enter volume of tank: ";
     cin>>volume_tank;
+    while (cin.fail()) {
+       ignoreLine();
+       cout << "You have entered a character, please enter a number" << endl;
+       cin >> volume_tank;
+    }
     vehicles[i].Set_volume_tank(volume_tank);
     cout<<"Enter power: ";
     cin>>power;
+    while (cin.fail()) {
+       ignoreLine();
+       cout << "You have entered a character, please enter a number" << endl;
+       cin >> power;
+    }
     vehicles[i].Set_power(power);
     cout<<"Enter travel time (in hours): ";
     cin>>travel_time;
+    while (cin.fail()) {
+       ignoreLine();
+       cout << "You have entered a character, please enter a number" << endl;
+       cin >> travel_time;
+    }
     vehicles[i].Set_travel_time(travel_time);
     cout<<"\n";
-    
+
   }
 }
 void output(int amount_vehicles,Vehicle *vehicles)
@@ -198,7 +229,7 @@ void output(int amount_vehicles,Vehicle *vehicles)
       cout<<"Volume of tank: "<<vehicles[i].Get_volume_tank()<<"\n";
       cout<<"Fuel consumption: "<<vehicles[i].fuel_consumption<<"\n";
       cout<<"Power: "<<vehicles[i].Get_power()<<"\n";
-      cout<<"Travel time: "<<vehicles[i].Get_travel_time()<<"\n";
+      cout<<"Travel time: "<<vehicles[i].Get_travel_time()<<"\n\n";
     }
  }
 void new_page()
@@ -227,7 +258,7 @@ void menu(int amount_vehicles,Vehicle *vehicles,int lenght_of_the_track)
   {
     case 1:
       new_page();
-      input(amount_vehicles,vehicles);
+      Vehicle(amount_vehicles,vehicles);
       for(int i=car-1;i<car;++i)
       {
       vehicles[i].determination_fuel_consumption(amount_vehicles, vehicles);
@@ -275,6 +306,8 @@ void menu(int amount_vehicles,Vehicle *vehicles,int lenght_of_the_track)
         return;
       }
       break;
+    default:
+      cout<<"Error! Try again"<<"\n";
   }
   }
 }
@@ -283,6 +316,11 @@ int main() {
   int lenght_of_the_track=0;
   cout << "How many vehicles do you want to create?";
   cin >> amount_vehicles;
+  while (cin.fail()) {
+     ignoreLine();
+     cout << "You have entered a character, please enter a number" << endl;
+     cin >> amount_vehicles;
+  }
   Vehicle *vehicles=new Vehicle[amount_vehicles];
   menu(amount_vehicles,vehicles,lenght_of_the_track);
   delete [] vehicles;
