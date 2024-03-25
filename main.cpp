@@ -17,6 +17,7 @@ void ignoreLine()
 }
 void input_coordinates(int current,int amount_polygons,polygon *p_polygon)
  {
+   double polarR=0;
      for(int i=amount_polygons-1;i<amount_polygons;++i)
      {
         double Radius = p_polygon[i].lenght_side/(2*sin(M_PI/p_polygon[i].amount_angles));
@@ -28,10 +29,16 @@ void input_coordinates(int current,int amount_polygons,polygon *p_polygon)
             cout << "You have entered a character, please enter a number" << endl;
             cin >> p_polygon[amount_polygons-1].x1;
         }
-        double y=sqrt(pow(Radius,2)-pow(p_polygon[amount_polygons-1].x1,2));
+        double ang=acos(p_polygon[i].x1/Radius);
+        double y=Radius*sin(ang);
+        polarR=((p_polygon[i].y1*p_polygon[i].y1)+(p_polygon[i].x1*p_polygon[i].x1));
+       do{
         cout<<"Enter coordinate y of the farest polygon vertex"<<"  ";
         cout<<"Y must be more than  "<<y<<"\n";
         cin>>p_polygon[amount_polygons-1].y1;
+        polarR=((p_polygon[i].y1*p_polygon[i].y1)+(p_polygon[i].x1*p_polygon[i].x1));
+       }
+         while(Radius-polarR>0);
        while (cin.fail()) {
            ignoreLine();
            cout << "You have entered a character, please enter a number" << endl;
@@ -164,72 +171,62 @@ p_polygon[i].S=p_polygon[i].amount_angles*pow(p_polygon[i].lenght_side,2)/(4*tan
 }
 void max_p_max_s(int amount_polygons,polygon *p_polygon,int p)
 {
-  if(amount_polygons==0)
+double max_value=0;
+int amount_max=0;
+int indexmax[amount_polygons];
+double values[amount_polygons];
+if(p==1)
+{
+  for(int i=0;i<amount_polygons;++i)
+    {
+      values[i]=p_polygon[i].P;
+    }
+}
+if(p==0)
+{
+  for(int i=0;i<amount_polygons;++i)
+    {
+      values[i]=p_polygon[i].S;
+    }
+}
+  for(int i=0;i<amount_polygons;++i)
+    {
+      if(values[i]>max_value)
+      {
+        max_value=values[i];
+      }
+    }
+  for(int i=0;i<amount_polygons;++i)
+    {
+      if(values[i]==max_value)
+      {
+        indexmax[amount_max]=i;
+        amount_max++;
+      }
+    }
+  if((amount_max==1)&&(p==1))
   {
-    cout<<"No polygons\n";
+    cout<<"Max perimeter= "<<max_value<<" and it is polygon "<<indexmax[0]+1<<"\n";
   }
-  double max_value=0;
-  int max_value_index[amount_polygons];
-  int amount_max=0;
-  if(p==1)
+  if((amount_max==1)&&(p==0))
   {
-    for(int i=0; i<amount_polygons;++i)
-      {
-        if(p_polygon[i].P-max_value>0)
-        {
-          max_value=p_polygon[i].P;
-        }
-      }
-    for(int i=0;i<amount_polygons;++i)
-      {
-        if(p_polygon[i].P==max_value)
-        {
-          max_value_index[amount_max]=i;
-          amount_max++;
-        }
-      }
-    if(amount_max==1)
-    {
-      cout<<"Polygon with max perimeter is polygon number "<<max_value_index[0]+1<<"\n";
-    }
-    if(amount_max>1)
-    {
-      cout<<"Polygons with max perimeter:\n";
-        for(int i=0;i<amount_max;++i)
-        {
-          cout<<max_value_index[i]+1<<"\n";
-        }
-    }
+    cout<<"Max area= "<<max_value<<" and it is polygon "<<indexmax[0]+1<<"\n";
   }
-  if(p==0)
+  if((amount_max>1)&&(p==1))
   {
-    for(int i=0; i<amount_polygons;++i)
+    cout<<"Max perimeter= "<<max_value<<" and they are polygons: ";
+    for(int i=0;i<amount_max;++i)
       {
-        if(p_polygon[i].P-max_value>0)
-        {
-          max_value=p_polygon[i].S;
-        }
+        cout<<indexmax[i]+1<<"\n";
       }
-    for(int i=0;i<amount_polygons;++i)
+  }
+  if((amount_max>1)&&(p==0))
+  {
+    cout<<"Max area= "<<max_value<<" and they are polygons: ";
+    for(int i=0;i<amount_max;++i)
       {
-        if(p_polygon[i].S==max_value)
-        {
-          max_value_index[amount_max]=i;
-          amount_max++;
-        }
+        cout<<indexmax[i]+1<<"\n";
       }
-    if(amount_max==1)
-    {
-      cout<<"Polygon with max square is polygon number "<<max_value_index[0]+1<<"\n";
-    }
-    if(amount_max>1)
-    {
-      cout<<"Polygons with max square:\n";
-        for(int i=0;i<amount_max;++i)
-        {
-          cout<<max_value_index[i]+1<<"\n";
-        }
-    }
   }
 }
 void delete_polygon(int& amount_polygons, polygon*& p_polygon)
