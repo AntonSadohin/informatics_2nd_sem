@@ -10,9 +10,9 @@ double mileage;
 double volume_tank;
 double power;
 double travel_time;
-public:
 double speed;
 double fuel_consumption;
+public:
 Vehicle(int amount_vehicles,Vehicle* vehicles);
 void Set_name(char carname[30])
 {
@@ -28,7 +28,7 @@ char Get_name()
 }
 void Set_amount_wheels(int amount_wheels)
 {
-  this->amount_wheels=amount_wheels;
+this->amount_wheels=amount_wheels;
 }
 int Get_amount_wheels()
 {
@@ -70,8 +70,14 @@ void determination_speed(int amount_vehicles,Vehicle *vehicles)
 {
   for(int i=0;i<amount_vehicles;i++)
     {
-      vehicles[i].speed=sqrt(vehicles[i].power)*((70/vehicles[i].amount_wheels)-2.5);
+      vehicles[i].speed=sqrt(vehicles[i].power)*((70/(double)vehicles[i].amount_wheels)-2.5);
     }
+}
+friend void ShowSpeed(int amount_vehicles,Vehicle *vehicles,int i)
+{
+  cout<<"Speed:";
+  cout<<vehicles[i].speed;
+  cout<<"\n";
 }
 void determination_fuel_consumption(int amount_vehicles,Vehicle *vehicles)
 {
@@ -79,6 +85,12 @@ void determination_fuel_consumption(int amount_vehicles,Vehicle *vehicles)
     {
       vehicles[i].fuel_consumption=((pow(vehicles[i].power,1/3)+sqrt(vehicles[i].power))-6.25);
     }
+}
+friend void Showfuelcons(int amount_vehicles,Vehicle *vehicles,int i)
+{
+  cout<<"Fuel consumption:";
+  cout<<vehicles[i].fuel_consumption;
+  cout<<"\n";
 }
 void Determination_track(int lenght_of_the_track,Vehicle *vehicles,int amount_vehicles)
 {
@@ -139,7 +151,9 @@ void Determination_track(int lenght_of_the_track,Vehicle *vehicles,int amount_ve
   for(int i=0;i<amount_vehicles;i++)
   {
     cout<<"VEHICLE: "<<name_v[i]<<"\n";
-    cout<<"TIME OF THE RACE:"<<time_of_the_race[i]<<" hours\n";
+    cout<<"TIME OF THE RACE:"<<(int)time_of_the_race[i]<<" hours\n";
+    cout<<(int)(time_of_the_race[i]-(int)time_of_the_race[i])<<" min\n";
+    cout<<(int)(time_of_the_race[i]*3600-(int)(time_of_the_race[i])*3600-(int)((time_of_the_race[i]-(int)time_of_the_race[i])*60)*60)<<" sec\n";
     cout<<"Amount_refuelings: "<<number_of_refuelings[i]<<"\n";
     cout<<"\n";
   }
@@ -225,9 +239,9 @@ void output(int amount_vehicles,Vehicle *vehicles)
       cout<<"Name: "<<vehicles[i].Get_name()<<"\n";
       cout<<"Amount of wheels: "<<vehicles[i].Get_amount_wheels()<<"\n";
       cout<<"Mileage: "<<vehicles[i].Get_mileage()<<"\n";
-      cout<<"Speed: "<<vehicles[i].speed<<"\n";
+      ShowSpeed(amount_vehicles, vehicles, i);
       cout<<"Volume of tank: "<<vehicles[i].Get_volume_tank()<<"\n";
-      cout<<"Fuel consumption: "<<vehicles[i].fuel_consumption<<"\n";
+      Showfuelcons(amount_vehicles, vehicles, i);
       cout<<"Power: "<<vehicles[i].Get_power()<<"\n";
       cout<<"Travel time: "<<vehicles[i].Get_travel_time()<<"\n\n";
     }
@@ -254,6 +268,11 @@ void menu(int amount_vehicles,Vehicle *vehicles,int lenght_of_the_track)
       cout<<"4.Determine the race"<<"\n";
       cout<<"5.Exit"<<"\n";
   cin>>choice;
+      while (cin.fail()) {
+         ignoreLine();
+         cout << "You have entered a character, please enter a number" << endl;
+         cin >> amount_vehicles;
+      }
   switch(choice) 
   {
     case 1:
@@ -316,14 +335,21 @@ int main() {
   int lenght_of_the_track=0;
   cout << "How many vehicles do you want to create?";
   cin >> amount_vehicles;
-  while (cin.fail()) {
-     ignoreLine();
-     cout << "You have entered a character, please enter a number" << endl;
-     cin >> amount_vehicles;
+  if(amount_vehicles<0)
+  {
+    do{
+      cout<<"Error! Try again(amount vehicles>0)"<<"\n";
+      cin >> amount_vehicles;
+    }
+     while(amount_vehicles<0);
+  }
+    while (cin.fail()) {
+       ignoreLine();
+       cout << "You have entered a character, please enter a number" << endl;
+       cin >> amount_vehicles;
   }
   Vehicle *vehicles=new Vehicle[amount_vehicles];
   menu(amount_vehicles,vehicles,lenght_of_the_track);
   delete [] vehicles;
   return 0;
-
 }
