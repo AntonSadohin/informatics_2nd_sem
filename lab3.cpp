@@ -2,6 +2,7 @@
 #include <string.h>
 #include <cmath>
 using namespace std;
+void ignoreLine();
 class Wheel{
 protected:
 public:
@@ -53,9 +54,35 @@ Vehicle(string vehicle_name, int wheels1) {
     }
     cout << "Enter the power of the car:\t";
     cin >> power;
+      while (cin.fail()) {
+       ignoreLine();
+       cout << "You have entered a character, please enter a number" << endl;
+       cin >> power;
+      }
+    do
+      {
+        if(power<=0)
+        {
+          cout<<"Error! Try again(power>0)"<<"\n";
+          cin >> power;
+        }
+      } while(power<=0);
     mileage = 0;
     cout << "Enter the Volume of the tank:";
     cin >> Volume_tank;
+        while (cin.fail()) {
+         ignoreLine();
+         cout << "You have entered a character, please enter a number" << endl;
+         cin >> Volume_tank;
+          }
+    do
+      {
+        if(Volume_tank<=0)
+        {
+          cout<<"Error! Try again(Volume_tank>0)"<<"\n";
+          cin >> Volume_tank;
+        }
+      } while(Volume_tank<=0);
       Current_volume=Volume_tank;
       engine_consumption=calculating_consumption(power);
       determination_speed();
@@ -177,6 +204,11 @@ void PrintRaceResults(int amount_vehicles, string* name_v, double* time_of_the_r
     }
 }
 };
+void ignoreLine()
+{
+    cin.clear();
+    cin.ignore();
+}
 void Wheel_mileage(Vehicle *vehicles, int amount_vehicles, double length_of_the_track) {
     for (int i = 0; i < amount_vehicles; i++) {
         for (int j = 0; j < vehicles[i].get_amount_wheels(); j++) {
@@ -207,21 +239,37 @@ void menu(int amount_vehicles, Vehicle *vehicles, double lenght_of_the_track,str
       cout<<"4.Determine the race"<<"\n";
       cout<<"5.Exit"<<"\n";
       cin>>choice;
+      while (cin.fail()) {
+         ignoreLine();
+         cout << "You have entered a character, please enter a number" << endl;
+         cin >> choice;
+          }
   switch(choice)
   {
     case 1:
       new_page();
       for(int i=0;i<amount_vehicles;++i)
       {
-        for (int i = 0; i < amount_vehicles; ++i) {
             string vehicle_name;
             int wheels;
             cout << "Enter vehicle name " << ": ";
             cin >> vehicle_name;
             cout << "Enter number of wheels for vehicle " << ": ";
             cin >> wheels;
+            while (cin.fail()) {
+               ignoreLine();
+               cout << "You have entered a character, please enter a number" << endl;
+               cin >> wheels;
+                }
+            do
+              {
+                if(wheels<=0)
+                {
+                  cout<<"Error! Try again(amount wheels>0)"<<"\n";
+                  cin >> wheels;
+                }
+              } while(wheels<=0);
             vehicles[i] = Vehicle(vehicle_name, wheels);
-        }
       }
       car++;
       break;
@@ -296,7 +344,7 @@ void menu(int amount_vehicles, Vehicle *vehicles, double lenght_of_the_track,str
           }
           break;
         default:
-          cout<<"Error! Try again"<<"\n";
+          cout<<"Please enter number (1-5)"<<"\n";
           }
     }
 }
@@ -309,6 +357,11 @@ int main()
   double power=0;
   cout << "How many vehicles do you want to create?";
   cin >> amount_vehicles;
+  while (cin.fail()) {
+     ignoreLine();
+     cout << "You have entered a character, please enter a number" << endl;
+     cin >> amount_vehicles;
+      }
   do
   {
     if(amount_vehicles<=0)
