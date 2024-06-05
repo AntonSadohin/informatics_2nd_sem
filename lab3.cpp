@@ -30,10 +30,14 @@ double calculating_consumption(double power)
 { return fabs(pow(power, 1 / 3) + sqrt(power) - 6.25);}
 };
 class Fuel_system{
-private:
-public:
+protected:
 double Volume_tank;
 double Current_volume;
+public:
+void calc_current_volume(double Volume_tank, double lenght_of_the_track,int num_ref,double engine_consumption)
+{
+  Current_volume= Volume_tank + num_ref * Volume_tank - lenght_of_the_track / 100 * engine_consumption;
+}
 };
 class Vehicle: public Engine, public Fuel_system {
 private:
@@ -96,6 +100,7 @@ Vehicle(string vehicle_name, int wheels1) {
     double get_eng_consumption(){return engine_consumption;}
     void set_amount_wheels(int amount_wheels) {this->amount_wheels=amount_wheels;}
     int get_amount_wheels() { return amount_wheels;}
+    double get_vol_tank(){return Volume_tank;}
     void Set_mileage(double mileage) {this->mileage=mileage;}
     int count_refueling(double lenght_of_the_track, int amount_vehicles, Vehicle *vehicles, int i,double power){
         int number_of_refuelings[amount_vehicles];
@@ -127,13 +132,6 @@ void after_track(double mileage) {
             os << "Speed: " << vehicle.speed << "\n\n";
             return os;
         }
-void calc_current_volume(Vehicle *vehicles,double lenght_of_the_track,int amount_vehicles,int i)
-{
-    for(int i=0;i<amount_vehicles;++i)
-{
-Current_volume=vehicles[i].Current_volume=vehicles[i].Volume_tank+vehicles[i].count_refueling(lenght_of_the_track,amount_vehicles, vehicles, i,power)*vehicles[i].Volume_tank-lenght_of_the_track/100*vehicles[i].calculating_consumption(power);
-}
-}
 friend void Determination_track(double lenght_of_the_track, Vehicle *vehicles, int amount_vehicles,double power)
 {
   int num_refuelings[amount_vehicles];
@@ -189,19 +187,17 @@ friend void Determination_track(double lenght_of_the_track, Vehicle *vehicles, i
     }
   for(int i=0;i<amount_vehicles;i++)
     {
-    vehicles[i].PrintRaceResults(amount_vehicles, name_v, time_of_the_race, num_refuelings);
+    vehicles[i].PrintRaceResults(amount_vehicles, name_v, time_of_the_race, num_refuelings,i);
     }
 }
-void PrintRaceResults(int amount_vehicles, string* name_v, double* time_of_the_race, int* num_refuelings) {
+void PrintRaceResults(int amount_vehicles, string* name_v, double* time_of_the_race, int* num_refuelings,int i) {
     cout << "Determination complete!\n";
-    for (int i = 0; i < amount_vehicles; i++) {
-        cout << "VEHICLE: а мо" << name_v[i] << "\n";
+        cout << "VEHICLE:" << name_v[i] << "\n";
         cout << "TIME OF THE RACE:" << (int)time_of_the_race[i] << " hours\n";
         cout << (int)((time_of_the_race[i] - (int)time_of_the_race[i]) * 60) << " min\n";
         cout << (int)(time_of_the_race[i] * 3600 - (int)(time_of_the_race[i]) * 3600 - (int)((time_of_the_race[i] - (int)time_of_the_race[i]) * 60) * 60) << " sec\n";
         cout << "Amount_refuelings: " << num_refuelings[i] << "\n";
         cout << "\n";
-    }
 }
 };
 void ignoreLine()
@@ -330,7 +326,7 @@ void menu(int amount_vehicles, Vehicle *vehicles, double lenght_of_the_track,str
                     vehicles[i].determination_speed();
                   }
                 }
-              vehicles[i].calc_current_volume(vehicles,lenght_of_the_track,amount_vehicles,i);
+              vehicles[i].calc_current_volume(vehicles[i].get_vol_tank(),lenght_of_the_track,vehicles[i].count_refueling(lenght_of_the_track,amount_vehicles, vehicles, i, power), vehicles[i].get_eng_consumption());
             }
           break;
 
@@ -350,6 +346,7 @@ void menu(int amount_vehicles, Vehicle *vehicles, double lenght_of_the_track,str
 }
 int main()
 {
+  srand(time(0));
   int amount_vehicles=0;
   double lenght_of_the_track = 0;
   string vehicle_name;
