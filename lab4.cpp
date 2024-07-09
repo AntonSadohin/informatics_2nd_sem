@@ -48,9 +48,9 @@ protected:
 double Volume_tank;
 double Current_volume;
 public:
-void calc_current_volume(double engine_consumption,double mileage)
+void calc_current_volume(double engine_consumption,double mileage_d)
 {
-  Current_volume=Volume_tank-((engine_consumption/100)*mileage);
+  Current_volume=Volume_tank-((engine_consumption/100)*mileage_d);
 }
 };
 
@@ -69,6 +69,7 @@ public:
 vector<wheel> vec_wheels;
 int stat_of_car;
 double pits_time=0;
+double mileage_d;
 string get_carname(){return carname;}
 void determination_speed() {
     speed=abs((sqrt(power) * ((70 / (amount_wheels)) - 2.5))*pow(0.75,brokenwheels));
@@ -82,6 +83,7 @@ double get_current_mil(){return current_mileage;}
 double get_speed(){return speed;};
 void set_time(double time){this->time=time;};
 void output_time();
+double get_mileage_d(){return mileage_d;};
 void calc_broken_wheels();
 int get_broken_wheels(){return brokenwheels;};
 int get_current_laps(){return current_laps;};
@@ -111,6 +113,8 @@ void check_refuel(double lenght_lap)
     amount_refuelings++;
     pits_time+=refueling_time;
     Current_volume=Volume_tank;
+    stat_of_car=2;
+    mileage_d=0;
   }
 }
 void check_change_wheels();
@@ -231,7 +235,7 @@ void menu()
           cout<<"Enter number(1-6) ";
           choice = checkinput(choice);
         }
-    
+
   switch(choice)
     {
       case 1: {
@@ -294,6 +298,11 @@ void menu()
           break;
         }
         double current_time=0;
+        int k[vehicles.size()];
+        for(int i=0;i<vehicles.size();++i)
+          {
+            k[i]=0;
+          }
         int racing_cars=vehicles.size();
         while(!end_race(vehicles,amount_laps,lenght_lap))
           {
@@ -304,6 +313,29 @@ void menu()
             for(int i=0;i<vehicles.size();++i)
               {
                 int exit=0;
+                if(vehicles[i].stat_of_car==2)
+                {
+                  vehicles[i].set_time(current_time);
+                  vehicles[i].output_time();
+                  cout<<"\n"<<vehicles[i].get_carname()<<" is refueling"<<endl;
+                  k[i]++;
+                  if(k[i]==60){
+                    vehicles[i].stat_of_car=0;
+                    k[i]=0;
+                  }
+                }
+                if(vehicles[i].stat_of_car==3)
+                {
+                  vehicles[i].set_time(current_time);
+                  vehicles[i].output_time();
+                  cout<<"\n"<<vehicles[i].get_carname()<<" is pitting"<<endl;
+                  k[i]++;
+                  if(k[i]==15)
+                  {
+                    vehicles[i].stat_of_car=0;
+                    k[i]=0;
+                  }
+                }
                 if (vehicles[i].stat_of_car==0)
                 {
                   vehicles[i].mileage_plus();
@@ -313,10 +345,11 @@ void menu()
                         vehicles[i].vec_wheels[j].check_status(vehicles[i].get_mileage(),vehicles[i].get_speed());
                   }
                   vehicles[i].calc_broken_wheels();
-                  vehicles[i].calc_current_volume(vehicles[i].get_consumption(),vehicles[i].get_current_mil());
+                  vehicles[i].calc_current_volume(vehicles[i].get_consumption(),vehicles[i].get_mileage_d());
                   vehicles[i].determination_speed();
                   vehicles[i].set_time(current_time);
                   vehicles[i].output_time();
+                  vehicles[i].mileage_d+=vehicles[i].get_speed()*dt;
                   cout<<"Vehicle: "<<vehicles[i].get_carname()
                     <<" Lap: "<<vehicles[i].get_current_laps()+1<<endl
                     <<" Current Speed: "<<vehicles[i].get_speed()<<"\n"
@@ -403,9 +436,10 @@ int main() {
   return 0;
 }
 void wheel::check_status(double mileage, double speed){
+  double k=0;
   if(status!=1){
-    double k=rand()%50 +(mileage/100);
-    if (k>49) {
+    k=(rand()%50)*0.8 +(mileage/25);
+    if (k>45) {
         status = 1; // Повреждено
     }
   }
@@ -435,7 +469,8 @@ void Vehicle::check_change_wheels()
   {
     if((brokenwheels!=0)&&(brokenwheels<amount_wheels))
     {
-      pits_time+=reWheel_time*brokenwheels;
+      stat_of_car=3;
+      pits_time+=reWheel_time;
       for(int i=0;i<vec_wheels.size();++i)
         {
           if(vec_wheels[i].get_status()==1)
