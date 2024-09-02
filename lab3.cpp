@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string.h>
 #include <cmath>
+#include <ctime>
 using namespace std;
 void ignoreLine();
 class Wheel{
@@ -133,7 +134,7 @@ void after_track(double mileage) {
             os << "Speed: " << vehicle.speed << "\n\n";
             return os;
         }
-friend void Determination_track(double lenght_of_the_track, Vehicle *vehicles, int amount_vehicles,double power,double num_refuelings[amount_vehicles],double time_of_the_race[amount_vehicles],string name_v[amount_vehicles])
+void Determination_track(double lenght_of_the_track, Vehicle *vehicles, int amount_vehicles,double power,double *num_refuelings,double *time_of_the_race,string *name_v)
 {
   for(int i=0;i<amount_vehicles;i++)
     {
@@ -222,7 +223,7 @@ void new_page()
       cout<<"\n";
     }
 }
-void menu(int amount_vehicles, Vehicle *vehicles, double lenght_of_the_track,string vehicle_name,int amount_wheels,double power,string name_v[amount_vehicles],double time_of_the_race[amount_vehicles],double num_refuelings[amount_vehicles])
+void menu(int amount_vehicles, Vehicle *vehicles, double lenght_of_the_track,string vehicle_name,int amount_wheels,double power,string *name_v,double *time_of_the_race,double* num_refuelings)
 {
   int choice;
   double mil=0;
@@ -303,7 +304,10 @@ void menu(int amount_vehicles, Vehicle *vehicles, double lenght_of_the_track,str
             break;
           }
           new_page();
-          Determination_track(lenght_of_the_track, vehicles, amount_vehicles, power, num_refuelings, time_of_the_race, name_v);
+          for(int i=0;i<amount_vehicles;++i)
+          {
+             vehicles[i].Determination_track(lenght_of_the_track, vehicles, amount_vehicles, power, num_refuelings, time_of_the_race, name_v);
+          }
           determination_complete++;
           Wheel_mileage(vehicles,amount_vehicles,lenght_of_the_track);
           mil=mil+lenght_of_the_track;
@@ -356,7 +360,7 @@ void menu(int amount_vehicles, Vehicle *vehicles, double lenght_of_the_track,str
 }
 int main()
 {
-  srand(time(0));
+  srand(time(NULL));
   int amount_vehicles=0;
   double lenght_of_the_track = 0;
   string vehicle_name;
